@@ -22,10 +22,10 @@ class Bullet(Sprite): ### using sprites allows for elements to be grouped and be
     def update(self):
         """Move the bullet up the screen."""
         # Update the decimal position of the bullet.
-        self.y -= self.settings.bullet_speed
+        self.y -= self.settings.bullet_speed ### amount stored in settings.bullet_speed is subtracted from self.y
         # Update the rect position.
-        self.rect.y = self.y
+        self.rect.y = self.y ### value of self.y is then set to self.rect.y
 
-    def draw_bullet(self):
+    def draw_bullet(self): ### call to draw bullet when ready
         """Draw the bullet to the screen."""
-        pygame.draw.rect(self.screen, self.color, self.rect)
+        pygame.draw.rect(self.screen, self.color, self.rect) ### fills color of draw.rect by using colors stored in self.color
