@@ -1,8 +1,10 @@
-import sys ### this is my own code
+import sys
+from time import sleep
 
 import pygame ### imports pygame from terminal installation
 
 from settings import Settings ### imports Settings module for adjustments to game
+from game_stats import GameStats
 from ship import Ship ### imports Ship module with additional settings
 from bullet import Bullet ### imports Bullet module with adjustments
 from alien import Alien ### imports alien image to game module
@@ -20,6 +22,9 @@ class AlienInvasion:
         self.settings.screen_width = self.screen.get_rect().width ### fullscreen mode allows for faster speeds on MacOS
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("AlienInvasion")
+
+        # Create an instance to store game statistics.
+        self.stats = GameStats(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group() ### groups is used to draw bullets to screen and store used bullets
@@ -80,10 +85,18 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0: ### checks to see if bullet has disappeared from the screen
                 self.bullets.remove(bullet) ### removed from bullets if it disappears
 
-        # Check for any bullets that have hit aliens.
-        #   If so, get rid of the bullet and the alien. ### this code compares the positions of all bullets in self.bullets and aliens in self.aliens
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisons(self):  ### compares positions of all bullets in self.bullets and aliens in self.aliens and removes them
+        """Respond to bullet-alien collisions."""
+        # Remove any bullets and aliens that have collided.
         collisions = pygame.sprite.groupcollide( ### when the rects of a bullet and an alien overlap, groupcollide() sends a key-value pair to the dictionary it returns### this code compares the positions of all bullets in self.bullets and aliens in self.aliens
                 self.bullets, self.aliens, True, True) ### the True statements
+
+        if not self.aliens: ### checks whether aliens group is empty
+            # Destroy existing bullets and create new fleet.
+            self.bullets.empty() ### empty() method removes all remaining sprites(bullets) from the group
+            self._create_fleet() ### this call fills the screen with aliens again
 
     def _update_aliens(self):
         """
@@ -92,6 +105,10 @@ class AlienInvasion:
         """
         self._check_fleet_edges()
         self.aliens.update()
+
+        # Look for alien-ship collisions. ### function below loops through the group aliens and returns the first alien it finds that has collided with ship
+        if pygame.sprite.spritecollideany(self.ship, self.aliens): ### if no collisions occur, functions returns None and if block does not execute
+            print("Ship hit!!!") ### if collisions occur, this call is printed
 
     def _create_fleet(self):
         """Create the fleet of aliens."""
