@@ -5,6 +5,7 @@ import pygame ### imports pygame from terminal installation
 
 from settings import Settings ### imports Settings module for adjustments to game
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship ### imports Ship module with additional settings
 from bullet import Bullet ### imports Bullet module with adjustments
@@ -24,8 +25,10 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("AlienInvasion")
 
-        # Create an instance to store game statistics.
+        # Create an instance to store game statistics,
+        #   and create a scoreboard.
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group() ### groups is used to draw bullets to screen and store used bullets
@@ -65,7 +68,8 @@ class AlienInvasion:
         """Start a new game when the player clicks Play."""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos) ### contains True or False value and will only restart if PLay is clicked and game is not currently active
         if button_clicked and not self.stats.game_active():
-            # Reset the game statistics.
+            # Reset the game settings.
+            self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.stats.game_active = True
 
@@ -122,10 +126,15 @@ class AlienInvasion:
         collisions = pygame.sprite.groupcollide( ### when the rects of a bullet and an alien overlap, groupcollide() sends a key-value pair to the dictionary it returns### this code compares the positions of all bullets in self.bullets and aliens in self.aliens
                 self.bullets, self.aliens, True, True) ### the True statements
 
+        if collisions:
+            self.stats.score += self.settings.alien_points
+            self.sb.prep_score()
+
         if not self.aliens: ### checks whether aliens group is empty
             # Destroy existing bullets and create new fleet.
             self.bullets.empty() ### empty() method removes all remaining sprites(bullets) from the group
             self._create_fleet() ### this call fills the screen with aliens again
+            self.settings.increase_speed() ### increased game tempo by using this call in this function when last alien is shot down
 
     def _update_aliens(self):
         """
@@ -220,6 +229,9 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        # Daraw the score information.
+        self.sb.show_score()
 
         # Draw the play button if the game is inactive.
         if not self.stats.game_active:
