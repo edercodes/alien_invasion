@@ -2,7 +2,7 @@ import pygame.font
 
 class Button:
 
-    def __init__(self, ai_game, msg): ### takes parameters above which contain button's text
+    def __init__(self, ai_game, msg):
         """Initialize button attributes."""
         self.screen = ai_game.screen
         self.screen_rect = self.screen.get_rect()
@@ -11,7 +11,7 @@ class Button:
         self.width, self.height = 200, 50
         self.button_color = (0, 255, 0)
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48) ### None tells pygame to use default font
+        self.font = pygame.font.SysFont(None, 48)
 
         # Build the button's rect object and center it.
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -22,7 +22,7 @@ class Button:
 
     def _prep_msg(self, msg):
         """Turn msg into a rendered image and center text on the bottom."""
-        self.msg_image = self.font.render(msg, True, self.text_color, ### font.reder() turns text stored in msg into an image, then stores it in self.msg_image
+        self.msg_image = self.font.render(msg, True, self.text_color,
                 self.button_color)
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
