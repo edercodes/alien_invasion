@@ -6,7 +6,7 @@ from ship import Ship
 class Scoreboard:
     """A class to report scoring information."""
 
-    def __init__(self, ai_game):    ### ai_game parameter allows access to settings, screen, and stat objects to report values being tracked
+    def __init__(self, ai_game):
         """Initialze scorekeeping attributes."""
         self.ai_game = ai_game
         self.screen = ai_game.screen
@@ -19,16 +19,16 @@ class Scoreboard:
         self.font = pygame.font.SysFont(None, 48)
 
         # Prepare the initial score images.
-        self.prep_score()   ### turns text to be displayed into an image
-        self.prep_high_score()  ### high score will dsiplay separate from score, so it needs its own method
+        self.prep_score()
+        self.prep_high_score()
         self.prep_level()
         self.prep_ships()
 
     def prep_score(self):
         """Turn the score into a rendered image."""
-        rounded_score = round(self.stats.score, -1)     ### tells Python to round value of stats.score to nearest 10 and store in rounded_score
-        score_str = "{:,}".format(rounded_score)   ### string formatting dierective tells Python to insert commas when converting a numerical value to a string
-        self.score_image = self.font.render(score_str, True,    ### string is passed to a render, which creates the image
+        rounded_score = round(self.stats.score, -1)
+        score_str = "{:,}".format(rounded_score)
+        self.score_image = self.font.render(score_str, True,
                 self.text_color, self.settings.bg_color)
 
         # Display the score at the top right of the screen.
