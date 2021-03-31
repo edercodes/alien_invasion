@@ -1,15 +1,15 @@
 import sys
 from time import sleep
 
-import pygame ### imports pygame from terminal installation
+import pygame
 
-from settings import Settings ### imports Settings module for adjustments to game
+from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
-from ship import Ship ### imports Ship module with additional settings
-from bullet import Bullet ### imports Bullet module with adjustments
-from alien import Alien ### imports alien image to game module
+from ship import Ship
+from bullet import Bullet
+from alien import Alien
 
 
 class AlienInvasion:
@@ -20,8 +20,8 @@ class AlienInvasion:
         pygame.init()
         self.settings = Settings()
 
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN) ### adjusted settings to allow full screen mode
-        self.settings.screen_width = self.screen.get_rect().width ### fullscreen mode allows for faster speeds on MacOS
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("AlienInvasion")
 
@@ -31,13 +31,13 @@ class AlienInvasion:
         self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
-        self.bullets = pygame.sprite.Group() ### groups is used to draw bullets to screen and store used bullets
-        self.aliens = pygame.sprite.Group() ### group is created to hold all aliens
+        self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
 
         # Make the Play button.
-        self.play_button = Button(self, "Play") ### creates the instance of Button with the label Play but doesn't draw button to screen
+        self.play_button = Button(self, "Play")
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -45,7 +45,7 @@ class AlienInvasion:
             self._check_events()
 
             if self.stats.game_active:
-                self.ship.update() ### ship updates in response to player input and processed before screen is updated
+                self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
 
@@ -56,17 +56,17 @@ class AlienInvasion:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-            elif event.type == pygame.KEYDOWN: ### responds when Pygame notices KEYDOWN
+            elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
-            elif event.type == pygame.KEYUP: ### detects KEYUP events by responding to key movements
+            elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
-            elif event.type == pygame.MOUSEBUTTONDOWN: ### detected any time player clicks anywhere on screen
-                mouse_pos = pygame.mouse.get_pos() ### returns tuple of mouse cursor's x and y corrdinates
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
 
     def _check_play_button(self, mouse_pos):
         """Start a new game when the player clicks Play."""
-        button_clicked = self.play_button.rect.collidepoint(mouse_pos) ### contains True or False value and will only restart if PLay is clicked and game is not currently active
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active():
             # Reset the game settings.
             self.settings.initialize_dynamic_settings()
@@ -91,14 +91,14 @@ class AlienInvasion:
 
     def _check_keydown_events(self, event):
         """Respond to keypresses."""
-        if event.key == pygame.K_RIGHT: ### checks what key is pressed
-            self.ship.moving_right = True ### detects which direction for ship to move
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
             sys.exit()
         elif event.key == pygame.K_SPACE:
-            self._fire_bullet() ### calls to fire bullets on screen when spacebnar is pressed
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
@@ -116,20 +116,20 @@ class AlienInvasion:
     def _update_bullets(self):
         """Update position of bullets and get rid of old bullets."""
         # Update bullet positions.
-        self.bullets.update() ### updates for each bullet placed in the group
+        self.bullets.update()
 
         # Get rid of bullets that have disappeared.
-        for bullet in self.bullets.copy(): ### copy method allows for bullet modifications inside the loop
-            if bullet.rect.bottom <= 0: ### checks to see if bullet has disappeared from the screen
-                self.bullets.remove(bullet) ### removed from bullets if it disappears
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
         self._check_bullet_alien_collisions()
 
-    def _check_bullet_alien_collisions(self):  ### compares positions of all bullets in self.bullets and aliens in self.aliens and removes them
+    def _check_bullet_alien_collisions(self):
         """Respond to bullet-alien collisions."""
         # Remove any bullets and aliens that have collided.
-        collisions = pygame.sprite.groupcollide( ### when the rects of a bullet and an alien overlap, groupcollide() sends a key-value pair to the dictionary it returns### this code compares the positions of all bullets in self.bullets and aliens in self.aliens
-                self.bullets, self.aliens, True, True) ### the True statements
+        collisions = pygame.sprite.groupcollide(
+                self.bullets, self.aliens, True, True)
 
         if collisions:
             for aliens in collisions.values():
@@ -137,11 +137,11 @@ class AlienInvasion:
             self.sb.prep_score()
             self.sb.check_high_score()
 
-        if not self.aliens:     ### checks whether aliens group is empty
+        if not self.aliens:
             # Destroy existing bullets and create new fleet.
-            self.bullets.empty()    ### empty() method removes all remaining sprites(bullets) from the group
-            self._create_fleet()    ### this call fills the screen with aliens again
-            self.settings.increase_speed()      ### increased game tempo by using this call in this function when last alien is shot down
+            self.bullets.empty()
+            self._create_fleet()
+            self.settings.increase_speed()
 
             # Increase level.
             self.stats.level += 1
@@ -155,8 +155,8 @@ class AlienInvasion:
         self._check_fleet_edges()
         self.aliens.update()
 
-        # Look for alien-ship collisions. ### function below loops through the group aliens and returns the first alien it finds that has collided with ship
-        if pygame.sprite.spritecollideany(self.ship, self.aliens): ### if no collisions occur, functions returns None and if block does not execute
+        # Look for alien-ship collisions.
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
 
         # Look for aliens hitting the bottom of the screen.
@@ -173,9 +173,9 @@ class AlienInvasion:
 
     def _ship_hit(self):
         """Respond to the ship being hit by an alien."""
-        if self.stats.ships_left > 0: ### moved existing code into an if block, which tests for at least one ship remaining
+        if self.stats.ships_left > 0:
             # Decrement ships_left and update scoreboard.
-            self.stats.ships_left -= 1 ### number of ships left is 1 after this process
+            self.stats.ships_left -= 1
             self.sb.prep_ships()
 
             # Get rid of any remaining aliens and bullets.
@@ -187,7 +187,7 @@ class AlienInvasion:
             self.ship.center_ship()
 
             # Pause.
-            sleep(0.5) ### pauses program executions for a half second, enough for player to see collision
+            sleep(0.5)
         else:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
@@ -196,19 +196,19 @@ class AlienInvasion:
         """Create the fleet of aliens."""
         # Create an alien and find the number of aliens in a row.
         # Spacing between each alien is equal to one alien width.
-        alien = Alien(self) ### creates an alien before performing calculations
-        alien_width, alien_height = alien.rect.size ### using size attribute to contain width and height of a rect object
-        available_space_x = self.settings.screen_width - (2 * alien_width) ### calculates horizontal space and space available for # of aliens
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        available_space_x = self.settings.screen_width - (2 * alien_width)
         number_aliens_x = available_space_x // (2 * alien_width)
 
         # Detemine the number of rows of aliens that fit on the screen.
         ship_height = self.ship.rect.height
         available_space_y = (self.settings.screen_height -
-                                (3 * alien_height) - ship_height) ### calulcation space_y_ cald immediate after previous calc
+                                (3 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
         # Create the full fleet of aliens.
-        for row_number in range(number_rows): ### use two nested loops to create multiple rows, inner loop creates the aliens in one row, outer loop counts from 0 to number of rows we want
+        for row_number in range(number_rows):
             for alien_number in range(number_aliens_x):
                 self._create_alien(alien_number, row_number)
 
@@ -221,17 +221,17 @@ class AlienInvasion:
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
 
-    def _check_fleet_edges(self): ### this action loops through the fleet
+    def _check_fleet_edges(self):
         """Respond appropriately if any aliens have reached an edge."""
-        for alien in self.aliens.sprites(): ### calls check_edges on each alien
+        for alien in self.aliens.sprites():
             if alien.check_edges():
-                self._change_fleet_direction() ### if true, the alien is at an edge and whole fleet needs to change direction
+                self._change_fleet_direction()
                 break
 
     def _change_fleet_direction(self):
         """Drop the entire fleet and change the fleet's direction."""
         for alien in self.aliens.sprites():
-            alien.rect.y += self.settings.fleet_drop_speed ### in this definition, the call loops through all the aliens and drops each one using self.settings.fleet_drop_speed
+            alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
     def _update_screen(self):
