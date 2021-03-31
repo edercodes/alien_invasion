@@ -9,7 +9,7 @@ class Settings:
         self.bg_color = (230, 230, 230)
 
         # Ship settings
-        self.ship_speed = 1.5 ### ship speed adjusted to 1.5 pixels on each pass through the loop
+        self.ship_speed = 1.5
         self.ship_limit = 3
 
         # Bullet settings
@@ -21,17 +21,17 @@ class Settings:
 
         # Alien settings
         self.alien_speed = 1.0
-        self.fleet_drop_speed = 10 ### controls how quickly fleet drops down each time an alien reaches the edge of the screen
+        self.fleet_drop_speed = 10
         # fleet_direction of 1 represents right; -1 represents left.
-        self.fleet_direction = 1 ### use of numbers instead of elif statements because there are only two directions to work with x and y coordinates
+        self.fleet_direction = 1
 
         # How quickly the game speeds up
-        self.speedup_scale = 1.1 ### controls how quickly the game speeds up; 2 would double game speed and 1 would be constant
+        self.speedup_scale = 1.1
 
         # How quickly the alien point values increase
         self.score_scale = 1.5
 
-        self.initialize_dynamic_settings() ### intializes the values for attributes that need to change throughout game
+        self.initialize_dynamic_settings()
 
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
@@ -40,14 +40,14 @@ class Settings:
         self.alien_speed = 1.0
 
         # fleet_direction of 1 represents right; -1 represents left.
-        self.fleet_direction = 1 ### included so aliens know to go right at game start
+        self.fleet_direction = 1
 
         # Scoring
         self.alien_points = 50
 
     def increase_speed(self):
         """Increase speed settings and alien point values."""
-        self.ship_speed *= self.speedup_scale ### multiplying each speed setting to increase speed of these elements
+        self.ship_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
 
