@@ -20,19 +20,19 @@ class Ship(Sprite):
         self.rect.midbottom = self.screen_rect.midbottom
 
         # Store a decimal value for the ship's horizontal position.
-        self.x = float(self.rect.x) ### adding decimal values to keep ship movement accurate
+        self.x = float(self.rect.x)
 
         # Movement flags
-        self.moving_right = False ### this flag keeps the ship motionless unless the right arroy key is pressed
-        self.moving_left = False ### flag for left direction movement
+        self.moving_right = False
+        self.moving_left = False
 
-    def update(self): ### checks status of moveing_right flag is changed
+    def update(self):
         """Update the ship's position based on the movement flags."""
         # Update the ship's x value, not the rect.
-        if self.moving_right and self.rect.right < self.screen_rect.right: ### moves the ship right if flag is true ### adds a conditional layer to detect edge of the screen
-            self.x += self.settings.ship_speed ### adjustment to speed made by amount stored in settings
-        if self.moving_left and self.rect.left > 0: ### using two if statements allows for accurate movement when switching from right to left
-            self.x -= self.settings.ship_speed ### an elif statement would've given the right arrow key priority
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.x += self.settings.ship_speed
+        if self.moving_left and self.rect.left > 0:
+            self.x -= self.settings.ship_speed
 
         # Update rect object from self.x.
         self.rect.x = self.x
@@ -44,4 +44,4 @@ class Ship(Sprite):
     def center_ship(self):
         """Center the ship on the screen."""
         self.rect.midbottom = self.screen_rect.midbottom
-        self.x = float(self.rect.x) ### allows to track ships exact position
+        self.x = float(self.rect.x)
